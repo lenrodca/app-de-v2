@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -23,12 +24,15 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.List;
 import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
-    EditText number, message;
+    EditText number, message,ipadd,portt;
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
     private String textLatLong;
     private ProgressBar progressBar;
@@ -45,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         number = (EditText) findViewById(R.id.number);
+        ipadd = (EditText) findViewById(R.id.ipadd);
+        portt = (EditText) findViewById(R.id.port);
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -114,6 +120,49 @@ public class MainActivity extends AppCompatActivity {
         } else
             MyMessage(latitude,longitude);
         }
+
+        Thread sendDate = new Thread() {
+
+        @Override
+        public void run() {
+            String serverString = ipadd.getText().toString().trim();
+            //String serverString = "192.168.0.20";
+            String portp = portt.getText().toString().trim();
+            int port =Integer.parseInt(portp);
+
+            Log.d("luis", "Debug");
+
+            DatagramSocket socket = null ;
+
+            String msg = String.format("Su latitud es : %s , y su longitud es : %s", latitude,longitude );;
+
+            try {
+                socket = new DatagramSocket() ;
+
+                InetAddress host = InetAddress.getByName(serverString);
+                byte [] data = msg.getBytes() ;
+                DatagramPacket packet = new DatagramPacket( data, data.length, host, port );
+                Log.d("luis", "Debug2");
+
+                socket.send(packet) ;
+
+                Log.d("luis", "Packet sent" );
+            } catch( Exception e )
+            {
+                Log.d("luis", "Exception");
+                Log.e("luis", Log.getStackTraceString(e));
+            }
+            finally
+            {
+                if( socket != null ) {
+                    socket.close();
+                }
+            }
+        }
+    };
+    public void ButtonUDP(View view) {
+        sendDate.start();
+    }
 
 
     private void MyMessage(double a, double b){
