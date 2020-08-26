@@ -8,10 +8,36 @@
 
     <EditText
         android:id="@+id/number"
+        android:layout_width="413dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="340dp"
+        android:hint="Ingresa un número de teléfono"
+        android:textSize="22sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <EditText
+        android:id="@+id/ipadd"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="282dp"
-        android:hint="Ingresa un número de teléfono"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="68dp"
+        android:hint="Ingresa una dirección IP"
+        android:textSize="22sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <EditText
+        android:id="@+id/port"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="132dp"
+        android:hint="Ingrese puerto"
         android:textSize="22sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -19,13 +45,39 @@
 
     <Button
         android:id="@+id/Button"
-        android:layout_width="144dp"
-        android:layout_height="86dp"
-        android:layout_marginEnd="134dp"
-        android:layout_marginRight="134dp"
-        android:layout_marginBottom="296dp"
+        android:layout_width="299dp"
+        android:layout_height="46dp"
+        android:layout_marginEnd="72dp"
+        android:layout_marginRight="72dp"
+        android:layout_marginBottom="168dp"
         android:onClick="ButtonSMS"
         android:text="Enviar coordenadas por SMS"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="299dp"
+        android:layout_height="45dp"
+        android:layout_marginEnd="72dp"
+        android:layout_marginRight="72dp"
+        android:layout_marginBottom="272dp"
+        android:onClick="ButtonUDP"
+        android:text="Enviar coordenadas por UDP"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/buttonTCP"
+        android:layout_width="299dp"
+        android:layout_height="45dp"
+        android:layout_marginEnd="72dp"
+        android:layout_marginRight="72dp"
+        android:layout_marginBottom="224dp"
+        android:onClick="ButtonTCP"
+        android:text="Enviar coordenadas por TCP"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="MissingConstraints" />
