@@ -51,22 +51,9 @@
         android:layout_height="45dp"
         android:layout_marginEnd="72dp"
         android:layout_marginRight="72dp"
-        android:layout_marginBottom="168dp"
+        android:layout_marginBottom="220dp"
         android:onClick="ButtonUDPStop"
         android:text="Parar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="MissingConstraints" />
-
-    <Button
-        android:id="@+id/buttonTCP"
-        android:layout_width="299dp"
-        android:layout_height="45dp"
-        android:layout_marginEnd="72dp"
-        android:layout_marginRight="72dp"
-        android:layout_marginBottom="224dp"
-        android:onClick="ButtonTCP"
-        android:text="Enviar coordenadas por TCP"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="MissingConstraints" />

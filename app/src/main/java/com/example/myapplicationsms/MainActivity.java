@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     double longitude;
     double latitude;
     int bandera = 0;
+    int banderaDatos = 0;
     String userCountry, userAddress;
     String currentDateTimeString;
 
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         portt = (EditText) findViewById(R.id.port);
 
 
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
 
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -70,64 +71,10 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        try {
-
-            gps_loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            network_loc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (gps_loc != null) {
-            final_loc = gps_loc;
-            latitude = final_loc.getLatitude();
-            longitude = final_loc.getLongitude();
-        }
-        else if (network_loc != null) {
-            final_loc = network_loc;
-            latitude = final_loc.getLatitude();
-            longitude = final_loc.getLongitude();
-        }
-        else {
-            latitude = 0.0;
-            longitude = 0.0;
-        }
 
 
-        ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE}, 1);
-
-        try {
-
-            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
-            if (addresses != null && addresses.size() > 0) {
-                userCountry = addresses.get(0).getPostalCode();
-                userAddress = addresses.get(0).getAddressLine(0);
-            }
-            else {
-                userCountry = "Unknown";
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
-
-
-//    public void ButtonSMS(View view) {
-//        if (ContextCompat.checkSelfPermission(
-//                getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION
-//        ) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(
-//                    MainActivity.this,
-//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                    REQUEST_CODE_LOCATION_PERMISSION
-//            );
-//        } else
-//            MyMessage(latitude,longitude);
-//        }
 
         Thread sendDate = new Thread() {
 
@@ -148,9 +95,34 @@ public class MainActivity extends AppCompatActivity {
 
             ;
             while (bandera == 0) {
+
+
+
                 try {
+                    LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+                    try {
+
+                        gps_loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        network_loc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if (gps_loc != null) {
+                        final_loc = gps_loc;
+                        latitude = final_loc.getLatitude();
+                        longitude = final_loc.getLongitude();
+                    } else if (network_loc != null) {
+                        final_loc = network_loc;
+                        latitude = final_loc.getLatitude();
+                        longitude = final_loc.getLongitude();
+                    } else {
+                        latitude = 0.0;
+                        longitude = 0.0;
+                    }
                     currentDateTimeString = java.text.DateFormat.getDateTimeInstance().format(new Date());
-                    String msg = String.format("55556 Su latitud es : %s , y su longitud es : %s. La fecha y la hora es : %s", latitude, longitude, currentDateTimeString);
+                    String msg = String.format("%s,%s,%s", latitude, longitude, currentDateTimeString);
 
                     socket = new DatagramSocket();
 
@@ -170,9 +142,19 @@ public class MainActivity extends AppCompatActivity {
                         socket.close();
                     }
                 }
+
+                try {
+                    //set time in mili
+                    Thread.sleep(2000);
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         }
     };
+
+
     public void ButtonUDP(View view) {
         sendDate.start();
         Toast.makeText(this, "Mensaje enviado", Toast.LENGTH_SHORT).show();
@@ -180,32 +162,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void ButtonUDPStop(View view) {
         bandera = 1;
+        banderaDatos = 1;
         Toast.makeText(this, "Mensaje detenido", Toast.LENGTH_SHORT).show();
     }
 
-    public void ButtonTCP(View view) {
-        MessageSender messageSender = new MessageSender();
-        messageSender.execute(String.format("Su latitud es : %s , y su longitud es : %s. La fecha y la hora es : %s", latitude,longitude,currentDateTimeString ),ipadd.getText().toString(),portt.getText().toString().trim());
-        Toast.makeText(this, "Mensaje enviado", Toast.LENGTH_SHORT).show();
-    }
-
-//
-//    private void MyMessage(double a, double b){
-//        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS);
-//        String phoneNumber = number.getText().toString().trim();
-//        String Message = String.format("Su latitud es : %s , y su longitud es : %s. La fecha y la hora es : %s ", a, b,currentDateTimeString);
-//        if(permissionCheck==PackageManager.PERMISSION_GRANTED){
-//            if(!number.getText().toString().equals("")) {
-//                SmsManager smsManager = SmsManager.getDefault();
-//                smsManager.sendTextMessage(phoneNumber, null, Message, null, null);
-//                Toast.makeText(this, "Mensaje enviado", Toast.LENGTH_SHORT).show();
-//            }
-//            else{
-//                Toast.makeText(this, "Inserte número", Toast.LENGTH_SHORT).show();
-//            }
-//        }else{
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, 0);
-//        }
-//    }
 
 }
