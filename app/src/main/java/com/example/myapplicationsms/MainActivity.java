@@ -31,13 +31,13 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
-    EditText number, message,ipadd,portt;
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
     private String textLatLong;
     private ProgressBar progressBar;
@@ -57,8 +57,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 //        number = (EditText) findViewById(R.id.number);
-        ipadd = (EditText) findViewById(R.id.ipadd);
-        portt = (EditText) findViewById(R.id.port);
+
 
 
 
@@ -80,9 +79,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            String serverString = ipadd.getText().toString().trim();
-            //String serverString = "192.168.0.20";
-            String portp = portt.getText().toString().trim();
+            String serverString = "50.16.15.31";
+            String serverString2 = "35.173.69.223";
+            String serverString3 = "52.204.246.231";
+
+
+            String portp = "49153";
             int port = Integer.parseInt(portp);
 
 
@@ -91,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
             Log.d("luis", "Debug");
 
             DatagramSocket socket = null;
+            DatagramSocket socket2 = null;
+            DatagramSocket socket3 = null;
 
 
             ;
@@ -121,17 +125,30 @@ public class MainActivity extends AppCompatActivity {
                         latitude = 0.0;
                         longitude = 0.0;
                     }
-                    currentDateTimeString = java.text.DateFormat.getDateTimeInstance().format(new Date());
+
+                    SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+                    Date GetDate = new Date();
+                    currentDateTimeString = timeStampFormat.format(GetDate);
+
+
                     String msg = String.format("%s,%s,%s", latitude, longitude, currentDateTimeString);
 
                     socket = new DatagramSocket();
+                    socket2 = new DatagramSocket();
+                    socket3 = new DatagramSocket();
 
                     InetAddress host = InetAddress.getByName(serverString);
+                    InetAddress host2 = InetAddress.getByName(serverString2);
+                    InetAddress host3 = InetAddress.getByName(serverString3);
                     byte[] data = msg.getBytes();
                     DatagramPacket packet = new DatagramPacket(data, data.length, host, port);
+                    DatagramPacket packet2 = new DatagramPacket(data, data.length, host2, port);
+                    DatagramPacket packet3 = new DatagramPacket(data, data.length, host3, port);
                     Log.d("luis", "Debug2");
 
                     socket.send(packet);
+                    socket2.send(packet2);
+                    socket3.send(packet3);
 
                     Log.d("luis", "Packet sent");
                 } catch (Exception e) {
@@ -145,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
                     //set time in mili
-                    Thread.sleep(2000);
+                    Thread.sleep(1000);
 
                 }catch (Exception e){
                     e.printStackTrace();
