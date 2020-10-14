@@ -5,6 +5,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -58,11 +59,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 //        number = (EditText) findViewById(R.id.number);
 
-
-
-
-
-
+        
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
@@ -75,8 +72,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-        Thread sendDate = new Thread() {
+    final Thread sendDate = new Thread() {
 
+        @SuppressLint("MissingPermission")
         @Override
         public void run() {
             String serverString = "50.16.15.31";
@@ -101,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
             while (bandera == 0) {
 
 
-
                 try {
                     LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -121,9 +118,6 @@ public class MainActivity extends AppCompatActivity {
                         final_loc = network_loc;
                         latitude = final_loc.getLatitude();
                         longitude = final_loc.getLongitude();
-                    } else {
-                        latitude = 0.0;
-                        longitude = 0.0;
                     }
 
                     SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -164,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                     //set time in mili
                     Thread.sleep(1000);
 
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
