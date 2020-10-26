@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     double latitude;
     int bandera = 0;
     int banderaDatos = 0;
+    int bandera_vehiculo1 = 0;
+    int bandera_vehiculo2 = 0;
     String userCountry, userAddress;
     String currentDateTimeString;
 
@@ -80,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
             String serverString = "50.16.15.31";
             String serverString2 = "35.173.69.223";
             String serverString3 = "52.204.246.231";
+            String serverPrueba = "192.168.0.10";
 
 
             String portp = "49153";
@@ -88,11 +91,10 @@ public class MainActivity extends AppCompatActivity {
 
 // t
 
-            Log.d("luis", "Debug");
-
             DatagramSocket socket = null;
             DatagramSocket socket2 = null;
             DatagramSocket socket3 = null;
+            DatagramSocket socket4 = null;
 
 
             ;
@@ -123,26 +125,34 @@ public class MainActivity extends AppCompatActivity {
                     SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
                     Date GetDate = new Date();
                     currentDateTimeString = timeStampFormat.format(GetDate);
+                    String msg = "";
 
-
-                    String msg = String.format("%s,%s,%s", latitude, longitude, currentDateTimeString);
+                    if (bandera_vehiculo1 == 1) {
+                         msg = String.format("%s,%s,%s,1", latitude, longitude, currentDateTimeString);
+                    } else if (bandera_vehiculo2 == 1){
+                         msg = String.format("%s,%s,%s,2", latitude, longitude, currentDateTimeString);
+                    }
 
                     socket = new DatagramSocket();
                     socket2 = new DatagramSocket();
                     socket3 = new DatagramSocket();
+                    socket4 = new DatagramSocket();
 
                     InetAddress host = InetAddress.getByName(serverString);
                     InetAddress host2 = InetAddress.getByName(serverString2);
                     InetAddress host3 = InetAddress.getByName(serverString3);
+                    InetAddress host4 = InetAddress.getByName(serverPrueba);
                     byte[] data = msg.getBytes();
                     DatagramPacket packet = new DatagramPacket(data, data.length, host, port);
                     DatagramPacket packet2 = new DatagramPacket(data, data.length, host2, port);
                     DatagramPacket packet3 = new DatagramPacket(data, data.length, host3, port);
+                    DatagramPacket packet4 = new DatagramPacket(data, data.length, host4, port);
                     Log.d("luis", "Debug2");
 
                     socket.send(packet);
                     socket2.send(packet2);
                     socket3.send(packet3);
+                    socket4.send(packet4);
 
                     Log.d("luis", "Packet sent");
                 } catch (Exception e) {
@@ -167,6 +177,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void ButtonUDP(View view) {
+        bandera_vehiculo1 = 1;
+        sendDate.start();
+        Toast.makeText(this, "Mensaje enviado", Toast.LENGTH_SHORT).show();
+    }
+
+    public void ButtonUDP2(View view) {
+        bandera_vehiculo2 = 1;
         sendDate.start();
         Toast.makeText(this, "Mensaje enviado", Toast.LENGTH_SHORT).show();
     }
