@@ -36,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -126,11 +127,14 @@ public class MainActivity extends AppCompatActivity {
                     Date GetDate = new Date();
                     currentDateTimeString = timeStampFormat.format(GetDate);
                     String msg = "";
+                    Random r = new Random();
+                    float gasoline = r.nextFloat();
+                    gasoline = gasoline * 100;
 
                     if (bandera_vehiculo1 == 1) {
-                         msg = String.format("%s,%s,%s,1", latitude, longitude, currentDateTimeString);
+                         msg = String.format("%s,%s,%s,1,%s", latitude, longitude, currentDateTimeString,gasoline);
                     } else if (bandera_vehiculo2 == 1){
-                         msg = String.format("%s,%s,%s,2", latitude, longitude, currentDateTimeString);
+                         msg = String.format("%s,%s,%s,2,%s", latitude, longitude, currentDateTimeString,gasoline);
                     }
 
                     socket = new DatagramSocket();
@@ -191,6 +195,8 @@ public class MainActivity extends AppCompatActivity {
     public void ButtonUDPStop(View view) {
         bandera = 1;
         banderaDatos = 1;
+        bandera_vehiculo1 = 0;
+        bandera_vehiculo2 = 0;
         Toast.makeText(this, "Mensaje detenido", Toast.LENGTH_SHORT).show();
     }
 
