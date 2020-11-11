@@ -6,6 +6,10 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
@@ -26,8 +30,10 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -37,6 +43,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -54,8 +62,21 @@ public class MainActivity extends AppCompatActivity {
     int bandera_vehiculo2 = 0;
     String userCountry, userAddress;
     String currentDateTimeString;
+    private BluetoothAdapter BluetoothAdap = null;
+    private Set Devices;
+    private static UUID MY_UUID = UUID.fromString("446118f0-8b1e-11e2-9e96-0800200c9a66");
 
+    // The local server socket
 
+    // based on android.bluetooth.BluetoothAdapter
+    private BluetoothAdapter mAdapter;
+    private BluetoothDevice remoteDevice;
+    private BluetoothAdapter mBluetoothAdapter;
+    private BluetoothDevice mBluetoothDevice;
+    private BluetoothSocket mBluetoothSocket;
+    private UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    String variable;
+int bytess;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,18 +93,38 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        try{
+
+            if(mBluetoothAdapter == null){
+                Log.d("bluetooth:", "device does not support bluetooth");
+            }
+            if(!mBluetoothAdapter.isEnabled()){
+                Intent enableBt = new Intent(
+                        BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                enableBt.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(enableBt);
+            }
+
+        }catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+
+
     }
 
 
     final Thread sendDate = new Thread() {
-
-        @SuppressLint("MissingPermission")
         @Override
         public void run() {
+
             String serverString = "50.16.15.31";
             String serverString2 = "35.173.69.223";
             String serverString3 = "52.204.246.231";
-            String serverPrueba = "192.168.0.10";
+            String serverPrueba = "192.168.1.8";
 
 
             String portp = "49153";
@@ -131,10 +172,28 @@ public class MainActivity extends AppCompatActivity {
                     float gasoline = r.nextFloat();
                     gasoline = gasoline * 100;
 
+
+                    mBluetoothDevice = mBluetoothAdapter.getRemoteDevice("00:21:13:05:56:FA");
+                    try {
+                        mBluetoothSocket = mBluetoothDevice.createRfcommSocketToServiceRecord(uuid);
+                        mBluetoothSocket.connect();
+                        InputStream socketInputStream =  mBluetoothSocket.getInputStream();
+                        byte[] buffer = new byte[1024];
+
+                        bytess = socketInputStream.read(buffer);
+                        variable = new String(buffer, 0, bytess);
+                        variable = variable.substring(1,4);
+
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
+
                     if (bandera_vehiculo1 == 1) {
-                         msg = String.format("%s,%s,%s,1,%s", latitude, longitude, currentDateTimeString,gasoline);
+                         msg = String.format("%s,%s,%s,1,%s", latitude, longitude, currentDateTimeString,variable);
                     } else if (bandera_vehiculo2 == 1){
-                         msg = String.format("%s,%s,%s,2,%s", latitude, longitude, currentDateTimeString,gasoline);
+                         msg = String.format("%s,%s,%s,2,%s", latitude, longitude, currentDateTimeString,variable);
                     }
 
                     socket = new DatagramSocket();
@@ -165,6 +224,11 @@ public class MainActivity extends AppCompatActivity {
                 } finally {
                     if (socket != null) {
                         socket.close();
+                        try {
+                            mBluetoothSocket.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
 
